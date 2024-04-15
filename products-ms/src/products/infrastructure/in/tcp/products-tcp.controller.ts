@@ -1,4 +1,4 @@
-import { Controller, ParseIntPipe } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ProductsService } from 'src/products/application/products.service';
 import { ValidateResponseDto } from 'src/common/decorators/validate-response-dto.decorator';
 import { ValidateErrors } from 'src/common/decorators/validate-error.decorator';
@@ -38,7 +38,7 @@ export class ProductsTCPController
 
   @MessagePattern({ cmd: 'find_one_product' })
   @ValidateResponseDto(ProductResponseDto)
-  findOne(@Payload('id', ParseIntPipe) id: number) {
+  findOne(@Payload() id: number) {
     // { id }
     return this.productsService.findOne(+id);
   }
@@ -49,7 +49,7 @@ export class ProductsTCPController
   }
 
   @MessagePattern({ cmd: 'delete_product' })
-  remove(@Payload('id', ParseIntPipe) id: number) {
+  remove(@Payload() id: number) {
     return this.productsService.remove(+id);
   }
 }

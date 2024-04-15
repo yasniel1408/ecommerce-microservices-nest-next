@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-postgresql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-postgresql
+  template:
+    metadata:
+      labels:
+        app: orders-postgresql
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: orders-postgresql
+          image: "postgres:latest"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "admin"

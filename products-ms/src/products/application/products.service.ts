@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ProductSQLAdapter } from '../infrastructure/out/sql-orm/product.repository';
 import { ProductAggregate } from '../domain/product.aggregate';
 import { CreateProductRequestDto } from '../infrastructure/in/dtos/request-dto/create-product.request.dto';
 import { PaginationQueryParamsDto } from '../infrastructure/in/dtos/request-dto/pagination.query.dto';
 import { UpdateProductRequestDto } from '../infrastructure/in/dtos/request-dto/update-product.request.dto';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductsService {
@@ -46,7 +47,11 @@ export class ProductsService {
 
     // 2- Si no existe el producto lanzamos un error
     if (!product) {
-      throw new BadRequestException('Product not found');
+      // throw new BadRequestException('Product not found');
+      throw new RpcException({
+        message: 'Product not found',
+        statusCode: HttpStatus.NOT_FOUND,
+      });
     }
 
     // 3- Pasamos por la capa de dominio para que corran todas nuestras reglas de negocio
@@ -68,7 +73,11 @@ export class ProductsService {
 
     // 2- Si no existe el producto lanzamos un error
     if (!product) {
-      throw new BadRequestException('Product not found');
+      // throw new BadRequestException('Product not found');
+      throw new RpcException({
+        message: 'Product not found',
+        statusCode: HttpStatus.NOT_FOUND,
+      });
     }
 
     // 3- Pasamos por la capa de dominio para que corran todas nuestras reglas de negocio
@@ -90,7 +99,11 @@ export class ProductsService {
 
     // 2- Si no existe el producto lanzamos un error
     if (!product) {
-      throw new BadRequestException('Product not found');
+      // throw new BadRequestException('Product not found');
+      throw new RpcException({
+        message: 'Product not found',
+        statusCode: HttpStatus.NOT_FOUND,
+      });
     }
 
     // 3- Pasamos por la capa de dominio para que corran todas nuestras reglas de negocio
