@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -16,6 +16,8 @@ export class OrdersController {
 
   @MessagePattern({ cmd: 'find_all_orders' })
   findAll() {
+    const logger = new Logger('API Gateway');
+    logger.log(`OrdersController.findAll()`);
     return this.ordersService.findAll();
   }
 

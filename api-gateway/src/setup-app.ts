@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
-import { CustomeExceptionFilter } from './common/filters/rpc-exception.filter';
+import { CustomExceptionFilter } from './common/filters/rpc-exception.filter';
 
 export const setupApp = (app: INestApplication) => {
   const packageJson = require(path.resolve('package.json'));
@@ -18,7 +18,7 @@ export const setupApp = (app: INestApplication) => {
     }),
   );
 
-  app.useGlobalFilters(new CustomeExceptionFilter());
+  app.useGlobalFilters(new CustomExceptionFilter());
 
   const configService = app.get(ConfigService);
   app.enableCors({
