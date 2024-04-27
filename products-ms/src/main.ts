@@ -1,9 +1,9 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   // API Server
@@ -23,6 +23,13 @@ async function bootstrap() {
         port: configService.getOrThrow<number>('PORT'),
       },
     });
+  microserviceApp.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   await microserviceApp.listen();
   logger.log(
     `Microservice is running on port: ${configService.getOrThrow<number>('PORT')}`,

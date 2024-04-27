@@ -1,0 +1,20 @@
+# API - Gateway
+
+GET http://localhost:3000/api/v1/ HTTP/1.1
+
+
+# PRODUCTS-SERVICE
+### get products
+GET http://localhost:3000/api/v1/products?page=1&limit=2 HTTP/1.1
+
+# ORDERS-SERVICE
+### get orders
+GET http://localhost:3000/api/v1/orders HTTP/1.1
+### create orders
+POST http://localhost:3000/api/v1/orders HTTP/1.1
+content-type: application/json
+
+{
+    "totalAmount": 100,
+    "totalItems": 2
+}

@@ -1,8 +1,8 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
 
-export const setupApp = (app: INestApplication) => {
+export const setupApp = (app) => {
   const packageJson = require(path.resolve('package.json'));
   process.env.API_VERSION = packageJson.version;
   process.env.API_NAME = packageJson.name;
