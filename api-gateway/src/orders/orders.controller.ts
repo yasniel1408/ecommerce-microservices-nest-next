@@ -39,6 +39,7 @@ export class OrdersController {
   @Get()
   @ValidateResponseDto(OrdersListResponseDto)
   public getOrders(): Observable<any> {
+    console.log('getOrders');
     return this.orderMService
       .send({ cmd: 'find_all_orders' }, {})
       .pipe(timeout(5000))

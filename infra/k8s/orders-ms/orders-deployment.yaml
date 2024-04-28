@@ -12,7 +12,7 @@ spec:
       labels:
         app: orders
     spec:
-      automountServiceAccountToken: false
+      #automountServiceAccountToken: false
       containers:
         - name: orders
           # image: "us.gcr.io/ticketing-microservices-369119/orders:latest"  // GCP
@@ -30,3 +30,4 @@ spec:
           #       secretKeyRef:
           #         name: jwt-secret
           #         key: JWT_KEY
+
