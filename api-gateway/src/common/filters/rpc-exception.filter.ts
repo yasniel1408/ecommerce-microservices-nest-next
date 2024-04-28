@@ -1,4 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 
 interface RpcExceptionType extends RpcException {
@@ -12,11 +18,38 @@ export class CustomExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    const rpcException: RpcExceptionType =
-      exception.getError() as RpcExceptionType;
+    const rpcException: RpcExceptionType & { code?: string } =
+      exception.getError() as RpcExceptionType & { code?: string };
 
     const logger = new Logger('API Gateway - CustomExceptionFilter');
 
+    // validar si el servicio no esta disponible
+    if (
+      exception instanceof RpcException &&
+      rpcException?.code === 'ECONNREFUSED'
+    ) {
+      logger.error('rpcException', rpcException);
+      return response.status(500).json({
+        statusCode: HttpStatus.SERVICE_UNAVAILABLE,
+        message: "Service isn't available, check the connection!!!",
+        code: rpcException.code,
+      });
+    }
+
+    // validar si demora mucho tiempo en responder
+    if (
+      exception instanceof RpcException &&
+      rpcException?.code === 'ETIMEDOUT'
+    ) {
+      logger.error('rpcException', rpcException);
+      return response.status(HttpStatus.GATEWAY_TIMEOUT).json({
+        statusCode: HttpStatus.GATEWAY_TIMEOUT,
+        message: 'Service is taking too long to respond',
+        code: rpcException.code,
+      });
+    }
+
+    // errores genericos
     if (
       typeof rpcException === 'object' &&
       exception instanceof RpcException &&
@@ -27,8 +60,8 @@ export class CustomExceptionFilter implements ExceptionFilter {
     }
 
     logger.error('rpcException', rpcException);
-    response.status(400).json({
-      statusCode: 400,
+    response.status(HttpStatus.BAD_REQUEST).json({
+      statusCode: HttpStatus.BAD_REQUEST,
       message: 'Bad Request',
     });
   }
