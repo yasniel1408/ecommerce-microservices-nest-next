@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OrderStatus } from './order-status.vo';
+import { OrderItem } from './order-item.entity';
 
-@Entity({ name: 'orders' })
+@Entity({ name: 'orders', schema: 'orders' })
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,4 +24,7 @@ export class Order {
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
+
+  @OneToMany(() => OrderItem, (item) => item.order)
+  items: OrderItem[];
 }

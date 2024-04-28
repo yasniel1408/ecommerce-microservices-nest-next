@@ -2,8 +2,8 @@ import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ValidateErrors } from 'src/common/decorators/validate-error.decorator';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { OrderStatus } from './entities/order-status.vo';
 import { OrdersService } from './orders.service';
+import { ChangeOrderStatusDto } from './dto/change-order-status.dto';
 
 @Controller()
 @ValidateErrors()
@@ -28,7 +28,7 @@ export class OrdersTcpController {
   }
 
   @MessagePattern({ cmd: 'change_status' })
-  changeStatus(@Payload() { status, id }: { status: OrderStatus; id: number }) {
+  changeStatus(@Payload() { status, id }: ChangeOrderStatusDto) {
     return this.ordersService.changeStatus(id, status);
   }
 }

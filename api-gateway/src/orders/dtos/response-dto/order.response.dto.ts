@@ -1,6 +1,7 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { IsPositive, Min } from 'class-validator';
 import { OrderStatus } from '../order-status.vo';
+import { OrderItemDto } from '../order-item.dto';
 
 export class OrderResponseDto {
   @Expose()
@@ -27,4 +28,8 @@ export class OrderResponseDto {
 
   @Expose()
   updatedAt: Date;
+
+  @Expose()
+  @Type(() => OrderItemDto)
+  items: OrderItemDto[];
 }
