@@ -44,7 +44,6 @@ export class OrdersController {
       .pipe(timeout(5000))
       .pipe(
         catchError((err) => {
-          console.log('err', err);
           throw new RpcException(err);
         }),
       );

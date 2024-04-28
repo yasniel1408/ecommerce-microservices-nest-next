@@ -29,17 +29,18 @@ export class CustomExceptionFilter implements ExceptionFilter {
       rpcException?.code === 'ECONNREFUSED'
     ) {
       logger.error('rpcException', rpcException);
-      return response.status(500).json({
+      return response.status(HttpStatus.SERVICE_UNAVAILABLE).json({
         statusCode: HttpStatus.SERVICE_UNAVAILABLE,
-        message: "Service isn't available, check the connection!!!",
+        message: 'Server refused connections, ' + rpcException.message,
         code: rpcException.code,
       });
     }
 
     // validar si demora mucho tiempo en responder
     if (
-      exception instanceof RpcException &&
-      rpcException?.code === 'ETIMEDOUT'
+      (exception instanceof RpcException &&
+        rpcException?.code === 'ETIMEDOUT') ||
+      rpcException.name === 'TimeoutError'
     ) {
       logger.error('rpcException', rpcException);
       return response.status(HttpStatus.GATEWAY_TIMEOUT).json({
