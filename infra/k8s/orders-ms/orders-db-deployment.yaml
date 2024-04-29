@@ -12,7 +12,7 @@ spec:
       labels:
         app: orders-postgresql
     spec:
-      automountServiceAccountToken: false
+      #automountServiceAccountToken: false
       containers:
         - name: orders-postgresql
           image: "postgres:latest"

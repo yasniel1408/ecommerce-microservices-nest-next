@@ -12,7 +12,7 @@ spec:
       labels:
         app: products-mysql
     spec:
-      # automountServiceAccountToken: false
+      #automountServiceAccountToken: false
       containers:
         - name: products-mysql
           image: "mysql:latest"
