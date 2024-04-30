@@ -46,17 +46,20 @@ export class OrdersController {
     const cachedData = await this.cacheService.get('orders-list');
 
     const getData = () =>
-      this.orderMService
-        .send({ cmd: 'find_all_orders' }, {})
-        .pipe(timeout(5000))
-        .pipe(
-          catchError((err) => {
-            throw new RpcException(err);
-          }),
-        )
-        .subscribe((data) => {
-          this.cacheService.set('orders-list', data);
-        });
+      new Promise((resolve, reject) => {
+        this.orderMService
+          .send({ cmd: 'find_all_orders' }, {})
+          .pipe(timeout(5000))
+          .subscribe({
+            next: (data) => {
+              this.cacheService.set(`orders-list`, data);
+              resolve(data);
+            },
+            error: (err) => {
+              reject(new RpcException(err));
+            },
+          });
+      });
 
     if (cachedData) {
       getData();
@@ -74,17 +77,20 @@ export class OrdersController {
     const cachedData = await this.cacheService.get(`order-${id}`);
 
     const getData = () =>
-      this.orderMService
-        .send({ cmd: 'find_one_order' }, id)
-        .pipe(timeout(5000))
-        .pipe(
-          catchError((err) => {
-            throw new RpcException(err);
-          }),
-        )
-        .subscribe((data) => {
-          this.cacheService.set(`order-${id}`, data);
-        });
+      new Promise((resolve, reject) => {
+        this.orderMService
+          .send({ cmd: 'find_one_order' }, id)
+          .pipe(timeout(5000))
+          .subscribe({
+            next: (data) => {
+              this.cacheService.set(`order-${id}`, data);
+              resolve(data);
+            },
+            error: (err) => {
+              reject(new RpcException(err));
+            },
+          });
+      });
 
     if (cachedData) {
       getData();

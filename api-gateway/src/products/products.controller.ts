@@ -1,29 +1,32 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
-  Post,
-  Get,
-  Put,
-  Delete,
+  Body,
   Controller,
+  Delete,
+  Get,
   Inject,
-  Query,
   Param,
   ParseIntPipe,
-  Body,
+  Post,
+  Put,
+  Query,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { PRODUCT_MICROSERVICE } from './constants.services';
+import { Cache } from 'cache-manager';
 import { Observable, catchError, timeout } from 'rxjs';
-import { PaginationQueryParamsDto } from './dtos/request-dto/pagination.query.dto';
 import { ValidateResponseDto } from 'src/common/decorators/validate-response-dto.decorator';
+import { PRODUCT_MICROSERVICE } from './constants.services';
+import { CreateProductRequestDto } from './dtos/request-dto/create-product.request.dto';
+import { PaginationQueryParamsDto } from './dtos/request-dto/pagination.query.dto';
+import { UpdateProductRequestDto } from './dtos/request-dto/update-product.request.dto';
 import { ProductListResponseDto } from './dtos/response-dto/product-list.response.dto';
 import { ProductResponseDto } from './dtos/response-dto/product.response.dto';
-import { CreateProductRequestDto } from './dtos/request-dto/create-product.request.dto';
-import { UpdateProductRequestDto } from './dtos/request-dto/update-product.request.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(
     @Inject(PRODUCT_MICROSERVICE) private readonly productMService: ClientProxy,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   @Post()
@@ -43,33 +46,69 @@ export class ProductsController {
 
   @Get()
   @ValidateResponseDto(ProductListResponseDto)
-  public getProducts(
-    @Query() pagination: PaginationQueryParamsDto,
-  ): Observable<ProductListResponseDto> {
-    // el send es para esperar una respuesta el emit no espera respuesta
-    return this.productMService
-      .send({ cmd: 'find_all_products' }, pagination)
-      .pipe(timeout(5000))
-      .pipe(
-        catchError((err) => {
-          throw new RpcException(err);
-        }),
-      );
+  async getProducts(@Query() pagination: PaginationQueryParamsDto) {
+    // 1-  check if data is in cache:
+    const cachedData = await this.cacheService.get(
+      `products-list-${pagination.page}-${pagination.limit}`,
+    );
+
+    const getData = () =>
+      new Promise((resolve, reject) => {
+        this.productMService
+          .send({ cmd: 'find_all_products' }, pagination)
+          .pipe(timeout(5000))
+          .subscribe({
+            next: (data) => {
+              this.cacheService.set(
+                `products-list-${pagination.page}-${pagination.limit}`,
+                data,
+              );
+              resolve(data);
+            },
+            error: (err) => {
+              reject(new RpcException(err));
+            },
+          });
+      });
+
+    if (cachedData) {
+      getData();
+      return cachedData;
+    }
+
+    // if not, call API and set the cache:
+    return getData();
   }
 
   @Get(':id')
   @ValidateResponseDto(ProductResponseDto)
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ): Observable<ProductResponseDto> {
-    return this.productMService
-      .send({ cmd: 'find_one_product' }, id)
-      .pipe(timeout(5000))
-      .pipe(
-        catchError((err) => {
-          throw new RpcException(err);
-        }),
-      );
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    // 1-  check if data is in cache:
+    const cachedData = await this.cacheService.get(`product-${id}`);
+    const getData = () =>
+      new Promise((resolve, reject) => {
+        this.productMService
+          .send({ cmd: 'find_one_product' }, id)
+          .pipe(timeout(5000))
+          .subscribe({
+            next: (data) => {
+              this.cacheService.set(`product-${id}`, data);
+              resolve(data);
+            },
+            error: (err) => {
+              reject(new RpcException(err));
+            },
+          });
+      });
+
+    if (cachedData) {
+      console.log('cachedData', cachedData);
+      getData();
+      return cachedData;
+    }
+
+    // if not, call API and set the cache:
+    return getData();
   }
 
   @Put(':id')

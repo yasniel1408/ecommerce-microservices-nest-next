@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { faker } from '@faker-js/faker';
+import axios from 'axios';
 
 async function createProducts() {
   try {
@@ -10,7 +10,7 @@ async function createProducts() {
         image: faker.image.imageUrl(),
         description: faker.commerce.productDescription(),
       };
-      await axios.post('http://localhost:3000/api/v1/products', productData);
+      await axios.post('http://ecommerce.com/api/v1/products', productData);
     }
     console.log('Productos creados exitosamente');
   } catch (error) {

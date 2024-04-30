@@ -24,7 +24,6 @@ export class CreateProductSubscriberController {
   })
   async getDate(@Payload() data, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`, data, context);
-    throw new Error('Error');
     await this.createProductService.create(data as ProductCreated);
   }
 }
