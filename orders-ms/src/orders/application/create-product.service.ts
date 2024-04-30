@@ -12,13 +12,17 @@ export class CreateProductService {
   ) {}
 
   async create(item: ProductCreated) {
-    const order = await this.orderItemRepository.save({
-      id: item.productId,
-      name: item.name,
-      price: item.price,
-      available: item.available,
-    });
+    try {
+      const order = await this.orderItemRepository.save({
+        id: item.productId,
+        name: item.name,
+        price: item.price,
+        available: item.available,
+      });
 
-    return order;
+      return order;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

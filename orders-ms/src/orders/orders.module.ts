@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -31,6 +32,7 @@ import { ProductDao } from './infrastructure/out/sql-orm/product.dao';
         inject: [ConfigService],
       },
     ]),
+    CacheModule.register(),
   ],
   controllers: [OrdersTcpController, CreateProductSubscriberController],
   providers: [
