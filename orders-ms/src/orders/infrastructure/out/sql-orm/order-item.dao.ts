@@ -1,13 +1,11 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Order } from './order.entity';
+import { OrderDao } from './order.dao';
+import { ProductDao } from './product.dao';
 
 @Entity({ name: 'order_items' })
-export class OrderItem {
+export class OrderItemDao {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  productId: number;
 
   @Column()
   quantity: number;
@@ -21,6 +19,12 @@ export class OrderItem {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @ManyToOne(() => Order, (order) => order.items)
-  order: Order;
+  @ManyToOne(() => OrderDao, (order) => order.items)
+  order: OrderDao;
+
+  @ManyToOne(() => ProductDao, (product) => product.items)
+  product: ProductDao;
+
+  @Column({ nullable: false })
+  productId: number;
 }

@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity({ name: 'products' })
+@Unique('UQ_NAME', ['name'])
 export class ProductDao {
   @PrimaryGeneratedColumn()
   id: number;
@@ -8,7 +9,9 @@ export class ProductDao {
   @Column('text')
   image: string;
 
-  @Column({ unique: true, length: 100 })
+  @Column({
+    length: 100,
+  })
   name: string;
 
   @Column('text')

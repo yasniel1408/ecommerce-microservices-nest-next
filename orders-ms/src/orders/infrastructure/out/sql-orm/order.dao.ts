@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { OrderStatus } from './order-status.vo';
-import { OrderItem } from './order-item.entity';
+import { OrderStatus } from '../../../domain/value-objects/order-status.vo';
+import { OrderItemDao } from './order-item.dao';
 
 @Entity({ name: 'orders' })
-export class Order {
+export class OrderDao {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,6 +25,6 @@ export class Order {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-  @OneToMany(() => OrderItem, (item) => item.order)
-  items: OrderItem[];
+  @OneToMany(() => OrderItemDao, (item) => item.order)
+  items: OrderItemDao[];
 }

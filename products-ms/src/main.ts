@@ -1,22 +1,23 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app/app.module';
+import { setupMicroservice } from './setup-microservice';
 
 async function bootstrap() {
-  // API Server
+  const logger = new Logger('Products Microservice');
+
+  // API
   const app: NestExpressApplication =
     await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   // setupApp(app);
   // await app.listen(configService.getOrThrow<number>('PORT'));
 
-  const logger = new Logger('Products Microservice');
-
-  // Microservice
-  const microserviceApp =
+  // MICROSERVICE TCP
+  const microserviceAppTCP =
     await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
       transport: Transport.TCP,
       options: {
@@ -24,16 +25,25 @@ async function bootstrap() {
         port: configService.getOrThrow<number>('PORT'),
       },
     });
-  microserviceApp.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
-  await microserviceApp.listen();
+  setupMicroservice(microserviceAppTCP);
+  await microserviceAppTCP.listen();
   logger.log(
-    `Microservice is running on port: ${configService.getOrThrow<number>('PORT')}`,
+    `Microservice with TCP is running on port: ${configService.getOrThrow<number>('PORT')}`,
   );
+
+  // MICROSERVICE NATS
+  const microserviceAppNATS =
+    await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+      transport: Transport.NATS,
+      options: {
+        servers: [configService.getOrThrow<string>('NATS_SERVERS')],
+        debug: true,
+        maxPingOut: 2,
+        queue: 'products-ms-queue',
+      },
+    });
+  setupMicroservice(microserviceAppNATS);
+  await microserviceAppNATS.listen();
+  logger.log(`Microservice with NATS is running`);
 }
 bootstrap();

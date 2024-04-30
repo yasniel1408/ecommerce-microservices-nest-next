@@ -1,4 +1,4 @@
-import { OrderStatus } from '../entities/order-status.vo';
+import { OrderStatus } from '../../../domain/value-objects/order-status.vo';
 
 export const OrderStatusList = [
   OrderStatus.PENDING,

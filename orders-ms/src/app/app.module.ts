@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { OrdersModule } from 'src/orders/orders.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { NATS_SERVICE } from './constants';
 
 @Module({
   imports: [
@@ -25,11 +27,25 @@ import { AppService } from './app.service';
           username: configService.getOrThrow<string>('DB_USERNAME'),
           password: configService.getOrThrow<string>('DB_PASSWORD'),
           database: configService.getOrThrow<string>('DB_DATABASE'),
-          entities: [__dirname + '../../**/*.entity{.ts,.js}'],
+          entities: [__dirname + '../../**/*.dao{.ts,.js}'],
           // autoLoadEntities: true,
           synchronize: true,
         }) as TypeOrmModuleAsyncOptions,
     }),
+    // NATS Client
+    ClientsModule.registerAsync([
+      {
+        name: NATS_SERVICE,
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.NATS,
+          options: {
+            servers: [configService.getOrThrow<string>('NATS_SERVERS')],
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
     OrdersModule,
   ],
   controllers: [AppController],

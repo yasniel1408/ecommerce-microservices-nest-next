@@ -1,11 +1,11 @@
-import { InjectRepository } from '@nestjs/typeorm';
-import { ProductDao } from './entities/product.dao';
-import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { CreateProductRequestDto } from '../../in/dtos/request-dto/create-product.request.dto';
-import { UpdateProductRequestDto } from '../../in/dtos/request-dto/update-product.request.dto';
-import { PaginationQueryParamsDto } from '../../in/dtos/request-dto/pagination.query.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ProductRepositoryPort } from 'src/products/domain/ports/out/db-repository.port';
+import { Repository } from 'typeorm';
+import { CreateProductRequestDto } from '../../in/dtos/request-dto/create-product.request.dto';
+import { PaginationQueryParamsDto } from '../../in/dtos/request-dto/pagination.query.dto';
+import { UpdateProductRequestDto } from '../../in/dtos/request-dto/update-product.request.dto';
+import { ProductDao } from './dao/product.dao';
 
 @Injectable()
 export class ProductSQLAdapter

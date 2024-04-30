@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ProductsModule } from 'src/products/products.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { NATS_SERVICE } from './constants';
 
 @Module({
   imports: [
@@ -30,6 +32,20 @@ import { AppService } from './app.service';
           synchronize: true,
         }) as TypeOrmModuleAsyncOptions,
     }),
+    // NATS Client
+    ClientsModule.registerAsync([
+      {
+        name: NATS_SERVICE,
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.NATS,
+          options: {
+            servers: [configService.getOrThrow<string>('NATS_SERVERS')],
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
     ProductsModule,
   ],
   controllers: [AppController],
