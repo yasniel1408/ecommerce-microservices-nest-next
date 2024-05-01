@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductCreated } from '../domain/events/product-created.event';
+import { DeleteProductPublisher } from '../infrastructure/out/publisher/deleted-product-saga.publisher';
 import { ProductDao } from '../infrastructure/out/sql-orm/product.dao';
 
 @Injectable()
@@ -9,6 +11,7 @@ export class CreateProductService {
   constructor(
     @InjectRepository(ProductDao)
     private orderItemRepository: Repository<ProductDao>,
+    private readonly deleteProductPublisher: DeleteProductPublisher,
   ) {}
 
   async create(item: ProductCreated) {
@@ -22,7 +25,12 @@ export class CreateProductService {
 
       return order;
     } catch (error) {
-      console.error(error);
+      // Implement SAGA pattern
+      await this.deleteProductPublisher.publish({ productId: item.productId });
+      throw new RpcException({
+        message: error.message,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
     }
   }
 }

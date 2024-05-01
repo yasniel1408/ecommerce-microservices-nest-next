@@ -5,7 +5,7 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { OrdersModule } from 'src/orders/orders.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { NATS_SERVICE } from './constants';
+import { NATS_SERVICE, natsOptions } from './constants';
 
 @Module({
   imports: [
@@ -41,6 +41,7 @@ import { NATS_SERVICE } from './constants';
           transport: Transport.NATS,
           options: {
             servers: [configService.getOrThrow<string>('NATS_SERVERS')],
+            ...natsOptions,
           },
         }),
         inject: [ConfigService],

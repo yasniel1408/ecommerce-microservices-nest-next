@@ -16,19 +16,13 @@ spec:
         - name: nats
           image: "nats:latest"
           args: [
-              # "-p",
-              # "4222",
-              # "-m",
-              # "8222",
-              # "-hbi", # Frecuencia con la que un servidor va a realizar solicitudes a sus clientes
-              # "5s",
-              # "-hbt", # En cuento tiempo debe responder cada cliente
-              # "5s",
-              # "-hbf", # Cantidad de veces que un cliente puede fallar antes de que NATS Server asuma que esa conexion esta muerta
-              # "2",
-              # "-SD",
-              # "-cid",
-              # "ecommerce.com", # Este es el nombre al cual luego hacermos refetencia para conectarnos
+              "-js", # JetStream
+              "-V", # trace
+              "-p",
+              "4222",
+              "-m",
+              "8222",
+              # "-n ecommerce.com", # Este es el nombre al cual luego hacermos refetencia para conectarnos
             ]
           resources:
             requests:

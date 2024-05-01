@@ -1,9 +1,9 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { setupApp } from './setup-app';
-import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppModule } from './app/app.module';
+import { setupApp } from './setup-app';
 
 async function bootstrap() {
   // API Server

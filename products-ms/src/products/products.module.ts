@@ -10,6 +10,7 @@ import { FindByIdProductService } from './application/find-by-id-product.service
 import { UpdateProductService } from './application/update-product.service';
 import { ProductAggregate } from './domain/product.aggregate';
 import { ProductsHttpController } from './infrastructure/in/http/products-http.controller';
+import { CreateProductSubscriberSAGAController } from './infrastructure/in/subscriber/product-deleted-subscriber-saga.controller';
 import { ProductsTCPController } from './infrastructure/in/tcp/products-tcp.controller';
 import { CreatedProductPublisher } from './infrastructure/out/publisher/created-product.publisher';
 import { ProductDao } from './infrastructure/out/sql-orm/dao/product.dao';
@@ -32,7 +33,11 @@ import { ProductSQLAdapter } from './infrastructure/out/sql-orm/product.reposito
       },
     ]),
   ],
-  controllers: [ProductsHttpController, ProductsTCPController],
+  controllers: [
+    ProductsHttpController,
+    ProductsTCPController,
+    CreateProductSubscriberSAGAController,
+  ],
   providers: [
     CreateProductsService,
     DeleteProductService,
@@ -42,6 +47,7 @@ import { ProductSQLAdapter } from './infrastructure/out/sql-orm/product.reposito
     ProductSQLAdapter,
     ProductAggregate,
     CreatedProductPublisher,
+    CreateProductSubscriberSAGAController,
   ],
 })
 export class ProductsModule {}

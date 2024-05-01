@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app/app.module';
+import { natsOptions } from './app/constants';
 import { setupMicroservice } from './setup-microservice';
 
 async function bootstrap() {
@@ -37,9 +38,7 @@ async function bootstrap() {
       transport: Transport.NATS,
       options: {
         servers: [configService.getOrThrow<string>('NATS_SERVERS')],
-        debug: true,
-        maxPingOut: 2,
-        queue: 'products-ms-queue',
+        ...natsOptions,
       },
     });
   setupMicroservice(microserviceAppNATS);

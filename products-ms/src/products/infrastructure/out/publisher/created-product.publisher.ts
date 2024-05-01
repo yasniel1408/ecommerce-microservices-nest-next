@@ -11,7 +11,19 @@ export class CreatedProductPublisher {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientNats) {}
 
   async publish(data: ProductCreated) {
-    this.client.connect();
-    this.client.emit<string, ProductCreated>(ProductCreatedEvent, data);
+    await this.client.connect();
+    this.client
+      .emit<string, ProductCreated>(ProductCreatedEvent, data)
+      .subscribe(
+        (value) => {
+          console.log('Value', value);
+        },
+        (error) => {
+          console.log('Error', error);
+        },
+        () => {
+          console.log('Completed');
+        },
+      );
   }
 }
