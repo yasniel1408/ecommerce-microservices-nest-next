@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 import { OrdersModule } from 'src/orders/orders.module';
+import { PaymentModule } from 'src/payments/payments.module';
 import { ProductsModule } from 'src/products/products.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -28,8 +29,10 @@ import { AppService } from './app.service';
         port: configService.getOrThrow<number>('CACHE_REDIS_PORT'),
       }),
     }),
+
     ProductsModule,
     OrdersModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
