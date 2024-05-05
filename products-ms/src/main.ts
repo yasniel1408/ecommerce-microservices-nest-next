@@ -1,7 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import {
+  MicroserviceOptions,
+  NatsOptions,
+  Transport,
+} from '@nestjs/microservices';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app/app.module';
 import { natsOptions } from './app/constants';
@@ -40,7 +44,7 @@ async function bootstrap() {
         servers: [configService.getOrThrow<string>('NATS_SERVERS')],
         ...natsOptions,
       },
-    });
+    } as NatsOptions);
   setupMicroservice(microserviceAppNATS);
   await microserviceAppNATS.listen();
   logger.log(`Microservice with NATS is running`);

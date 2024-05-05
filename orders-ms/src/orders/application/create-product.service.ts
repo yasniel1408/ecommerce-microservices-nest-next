@@ -21,6 +21,7 @@ export class CreateProductService {
         name: item.name,
         price: item.price,
         available: item.available,
+        version: item.version,
       });
 
       return order;

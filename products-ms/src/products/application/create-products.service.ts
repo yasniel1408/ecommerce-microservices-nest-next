@@ -33,6 +33,7 @@ export class CreateProductsService {
         name: newProduct.name,
         price: newProduct.price,
         available: newProduct.available,
+        version: newProduct.version,
       });
 
       // 4- Retornamos el producto si todo esta ok

@@ -30,4 +30,8 @@ export class ProductResponseDto {
   @IsString()
   @Expose()
   updatedAt: Date;
+
+  @IsNumber()
+  @Expose()
+  version: number;
 }

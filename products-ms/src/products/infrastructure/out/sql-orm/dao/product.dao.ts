@@ -28,4 +28,7 @@ export class ProductDao {
 
   @Column({ default: true })
   available: boolean;
+
+  @Column({ default: 1 })
+  version: number;
 }

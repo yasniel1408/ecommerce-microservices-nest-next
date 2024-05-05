@@ -14,4 +14,5 @@ export const natsOptions = {
   // json: true, // enviar y recibir mensajes en formato JSON
   timeout: 10000, // tiempo de espera para una respuesta
   waitOnFirstConnect: true,
+  queue: 'orders-ms-queue',
 };

@@ -27,4 +27,7 @@ export class OrderDao {
 
   @OneToMany(() => OrderItemDao, (item) => item.order)
   items: OrderItemDao[];
+
+  @Column({ default: 1 })
+  version: number;
 }

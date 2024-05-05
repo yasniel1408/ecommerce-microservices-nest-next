@@ -27,4 +27,7 @@ export class OrderItemDao {
 
   @Column({ nullable: false })
   productId: number;
+
+  @Column({ default: 1 })
+  version: number;
 }

@@ -12,18 +12,6 @@ export class CreatedProductPublisher {
 
   async publish(data: ProductCreated) {
     await this.client.connect();
-    this.client
-      .emit<string, ProductCreated>(ProductCreatedEvent, data)
-      .subscribe(
-        (value) => {
-          console.log('Value', value);
-        },
-        (error) => {
-          console.log('Error', error);
-        },
-        () => {
-          console.log('Completed');
-        },
-      );
+    this.client.emit<string, ProductCreated>(ProductCreatedEvent, data);
   }
 }
