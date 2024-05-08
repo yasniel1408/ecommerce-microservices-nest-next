@@ -1,14 +1,15 @@
 import { HttpService } from '@nestjs/axios';
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { PaymentSessionDto } from './dtos/payment-session.dto';
 
 @Controller('payments')
 export class PaymentHttpController {
   constructor(private readonly httpService: HttpService) {}
 
   @Post('create-payment')
-  create() {
+  create(@Body() body: PaymentSessionDto) {
     return this.httpService.axiosRef
-      .post(`/create-payment`)
+      .post(`/create-payment`, body)
       .then((res) => res.data)
       .catch((err) => {
         console.log(err.message);
