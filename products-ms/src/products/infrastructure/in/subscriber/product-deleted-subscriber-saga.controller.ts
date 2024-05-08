@@ -13,7 +13,7 @@ export class CreateProductSubscriberSAGAController {
   constructor(private readonly deleteProductService: DeleteProductService) {}
 
   @EventPattern(ProductDeletedEventSAGA)
-  async getDate(@Payload() data, @Ctx() context: NatsContext) {
+  async deleteProductSAGA(@Payload() data, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`, data);
     const { productId } = data as ProductDeletedSAGA;
     return await this.deleteProductService.remove(productId);
